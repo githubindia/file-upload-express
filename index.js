@@ -31,6 +31,7 @@ var app =   express();
 var fs = require("fs");
 var request = require("request");
 var cloudinary = require('cloudinary');
+var path = require('path');
 require('dotenv').config()
 
 
@@ -48,10 +49,32 @@ var storage =   multer.diskStorage({
   },  
   filename: function (req, file, callback) {
       image = file.originalname;
-    callback(null, file.originalname);
+    callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }  
 });  
-var upload = multer({ storage : storage}).single('img');  
+var upload = multer({
+    storage : storage,
+    limits: 10000000,
+    fileFilter: function(req, file, cb){
+        checkFileType(file, cb);
+    }
+}).single('img');
+
+// Check File Type
+function checkFileType(file, cb){
+  // Allowed ext
+  const filetypes = /jpeg|jpg|png|gif/;
+  // Check ext
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  // Check mime
+  const mimetype = filetypes.test(file.mimetype);
+
+  if(mimetype && extname){
+    return cb(null,true);
+  } else {
+    cb('Error: Images Only!');
+  }
+}
 
 var port = process.env.PORT || 3000
   
@@ -59,14 +82,14 @@ app.get('/',function(req,res) {
       res.sendFile(__dirname + "/index.html");
 });
   
-app.post('/images',function(req,res){  
-    upload(req, res, function(err) {  
+app.post('/images',function(req,res) { 
+    upload(req, res, function(err) { 
         if(err) {  
-            return res.end("Error uploading file." + err);  
+            return res.end(err);  
         } else {
               res.end("File is uploaded successfully!");
               cloudinary.uploader.upload(req.file.path, function(result) {
-                  console.log(req.file)
+                console.log(req.file)
                 console.log(result);
                     //create an urembo product
                     //save the product and check for errors
