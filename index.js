@@ -43,10 +43,12 @@ var storage =   multer.diskStorage({
   }  
 });  
 var upload = multer({ storage : storage}).single('img');  
+
+var port = process.env.PORT || 3000
   
 app.get('/',function(req,res) {  
       res.sendFile(__dirname + "/index.html");
-});  
+});
   
 app.post('/images',function(req,res){  
     upload(req, res, function(err) {  
@@ -79,6 +81,6 @@ app.post('/images',function(req,res){
     });  
 });  
   
-app.listen(3000,function(){  
+app.listen(port, function(){  
     console.log("Server is running on port 3000");  
 });
