@@ -30,9 +30,18 @@ var multer  =   require('multer');
 var app =   express();
 var fs = require("fs");
 var request = require("request");
+var cloudinary = require('cloudinary');
 require('dotenv').config()
 
+
+cloudinary.config({ 
+  cloud_name: 'hexai', 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 var image;
+
 var storage =   multer.diskStorage({  
   destination: function (req, file, callback) {  
     callback(null, './uploads');  
@@ -55,30 +64,35 @@ app.post('/images',function(req,res){
         if(err) {  
             return res.end("Error uploading file." + err);  
         } else {
-            
-            var options = { 
-                method: 'POST',
-                url: 'https://api.deepai.org/api/colorizer',
-                headers: {
-                    'api-key': process.env.API_KEY,
-                    'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
-                },
-                formData: {
-                    image: {
-                        value: `fs.createReadStream(/uploads/${image})`,
-                        options: {
-                            filename: `uploads/${image}`, contentType: null
-                        }
-                    }
-                }
-            };
-            request(options, function (error, response, body) {
-              if (error) throw new Error(error);
-
-              console.log(body);
               res.end("File is uploaded successfully!");
-            });
+              cloudinary.uploader.upload(req.file.path, function(result) {
+                  console.log(req.file)
+                console.log(result);
+                    //create an urembo product
+                    //save the product and check for errors
+                });
+            // var options = { 
+            //     method: 'POST',
+            //     url: 'https://api.deepai.org/api/colorizer',
+            //     headers: {
+            //         'api-key': process.env.API_KEY,
+            //         'content-type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
+            //     },
+            //     formData: {
+            //         image: {
+            //             value: `fs.createReadStream(/uploads/${image})`,
+            //             options: {
+            //                 filename: `uploads/${image}`, contentType: null
+            //             }
+            //         }
+            //     }
+            // };
+            // request(options, function (error, response, body) {
+            //   if (error) throw new Error(error);
 
+            //   console.log(body);
+            //   res.end("File is uploaded successfully!");
+            // });
         }
     });  
 });  
