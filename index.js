@@ -55,7 +55,7 @@ app.post('/images',function(req,res){
         if(err) {  
             return res.end("Error uploading file." + err);  
         } else {
-            res.end("File is uploaded successfully!");
+            
             var options = { 
                 method: 'POST',
                 url: 'https://api.deepai.org/api/colorizer',
@@ -76,7 +76,9 @@ app.post('/images',function(req,res){
               if (error) throw new Error(error);
 
               console.log(body);
+              res.end("File is uploaded successfully!");
             });
+
         }
     });  
 });  
