@@ -69,7 +69,7 @@ function checkFileType(file, cb){
   // Check mime
   const mimetype = filetypes.test(file.mimetype);
 
-  if(mimetype && extname){
+  if(mimetype && extname) {
     return cb(null,true);
   } else {
     cb('Error: Images Only!');
@@ -82,12 +82,12 @@ app.get('/',function(req,res) {
       res.sendFile(__dirname + "/index.html");
 });
   
-app.post('/images',function(req,res) { 
-    upload(req, res, function(err) { 
-        if(err) {  
-            return res.end(err);  
+app.post('/images',function(req,res) {
+    upload(req, res, function(err) {
+        if(err) {
+            return res.end(err);
         } else {
-              res.end("File is uploaded successfully!");
+              res.end("File is uploaded successfully!");;
               cloudinary.uploader.upload(req.file.path, function(result) {
                 console.log(req.file)
                 console.log(result);
