@@ -87,12 +87,11 @@ app.post('/images',function(req,res) {
         if(err) {
             return res.end(err);
         } else {
-              res.end("File is uploaded successfully!");;
+              res.end("File is uploaded successfully!");
               cloudinary.uploader.upload(req.file.path, function(result) {
-                console.log(req.file)
                 console.log(result);
-                    //create an urembo product
-                    //save the product and check for errors
+                //create an urembo product
+                //save the product and check for errors
                 });
             // var options = { 
             //     method: 'POST',
@@ -120,5 +119,5 @@ app.post('/images',function(req,res) {
     });  
 });
 app.listen(port, function(){  
-    console.log("Server is running on port: " + port);  
+    console.log("Server is running on port: " + port);
 });
